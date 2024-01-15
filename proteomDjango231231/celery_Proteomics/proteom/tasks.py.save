@@ -1,0 +1,103 @@
+   
+from celery import shared_task
+import os, sys
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+from django.utils import timezone
+import pandas as pd
+from .models import FileList # proteinGroups2groups, 
+
+@shared_task
+def test(filename, username):
+    fileList = FileList(performer=username, filename=filename, submitted_at=timezone.now())
+    fileList.save()
+
+    return username
+
+#  V1 -> V2
+@shared_task
+def parse_protein(filename, username,NOS,S_INFO):
+    
+
+    fileList = FileList(performer=username, filename=filename, submitted_at=timezone.now())
+
+    fileList.save()
+
+    fs = FileSystemStorage()
+    def maskcolumns(xc):
+            #sample
+
+
+            
+        columns1 = ['Protein IDs'	,'Majority protein IDs'	,'Fasta headers'	,'Number of proteins',	'Peptides',	'Unique peptides',
+            'Sequence coverage [%]',	'Mol. weight [kDa]',	'Q-value'	,'Score']
+        columns2 =[x for x in xc if 'Reporter intensity corrected' in x ] 
+    #    Con_DJ rep_1	Con_eMSP1 rep_1	Con_cMSP1 rep_1	JA_DJ rep_1	JA_eMSP1 rep_1	JA_cMSP1 rep_1	Con_DJ rep_2	Con_eMSP1 rep_2	Con_cMSP1 rep_2	JA_DJ rep_2	JA_eMSP1 rep_2	JA_cMSP1 rep_2	Con_DJ rep_3	Con_eMSP1 rep_3	Con_cMSP1 rep_3	JA_DJ rep_3	JA_eMSP1 rep_3	JA_cMSP1 rep_3	MS/MS count	
+
+        columns3 =    ['id','Evidence IDs']
+        return columns1+columns2+columns3
+    def changeolumns(xc,NOS,S_INFO):
+
+        samples= S_INFO.split(',')
+        int(NOS)==len(samples)
+        
+        columns1 = ['Protein IDs'	,'Majority protein IDs'	,'Fasta headers'	,'Number of proteins',	'Peptides',	'Unique peptides',
+            'Sequence coverage [%]',	'Mol. weight [kDa]',	'Q-value'	,'Score']
+        columns2 = [samples[(int(x.split('Reporter intensity corrected')[1].split('MSP')[0])-1) ]+'_'+ x.split('TMT ')[1] for x in xc if 'Reporter intensity corrected' in x ] 
+    #    Con_DJ rep_1	Con_eMSP1 rep_1	Con_cMSP1 rep_1	JA_DJ rep_1	JA_eMSP1 rep_1	JA_cMSP1 rep_1	Con_DJ rep_2	Con_eMSP1 rep_2	Con_cMSP1 rep_2	JA_DJ rep_2	JA_eMSP1 rep_2	JA_cMSP1 rep_2	Con_DJ rep_3	Con_eMSP1 rep_3	Con_cMSP1 rep_3	JA_DJ rep_3	JA_eMSP1 rep_3	JA_cMSP1 rep_3	MS/MS count	
+
+        columns3 =    ['id','Evidence IDs']
+        return columns1+columns2+columns3
+
+    # definitions
+
+
+    def read_proteingroups(file_root):
+        
+        #read proteingroups
+
+        df_pgs = pd.read_csv(f'{file_root}', sep='\t')
+        df_pgs_ix=df_pgs[maskcolumns(df_pgs.columns)]
+        df_pgs_ix.columns = changeolumns(df_pgs_ix.columns, NOS,S_INFO)
+        
+        
+        return df_pgs_ix
+                
+
+   
+    # READ DATA
+    #    df_db = pd.DataFrame(list(V1toV2.objects.all().values())).set_index('v1')
+    f_n = os.path.join(settings.MEDIA_ROOT, filename)
+    df_proteingroups = read_proteingroups(f_n)
+   
+    output_name = 'output' + '/' + ''.join(filename) + '_' +'_'.join(str(timezone.now()).split(' '))
+    output_file = os.path.join(settings.MEDIA_ROOT, output_name)
+
+    df_proteingroups.to_csv(output_file, sep='\t', index=False)
+    
+
+    uploaded_file_url = fs.url(output_name)
+    os.system(f'gzip {output_file}')
+    uploaded_file_url = fs.url(output_name+'.csv')
+    fs.delete(filename)
+
+    fileList.fileUrl = uploaded_file_url
+    fileList.created_at = timezone.now()
+    fileList.save()
+    
+    return uploaded_file_url
+
+
+@shared_task
+def add(x, y):
+    print(x+y)
+    return x + y
+
+@shared_task
+def mul(x, y):
+    return x * y
+
+
+@shared_task
+def xsum(numbers):
+    return sum(numbers)

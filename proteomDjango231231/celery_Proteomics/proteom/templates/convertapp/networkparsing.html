@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block mainContent %}
+<div class="container main">
+    <div class="row main">
+        <div class="col tools_desc">
+            <div>
+                <h4 style="font-weight: bolder">
+                    <span style="font-style: italic">O.sativa</span>
+proteomdata Converter
+                </h4>
+                <p>
+                    Update Information of
+                    <span style="font-style: italic">O.sativa</span>
+                    proteomedata
+                </p>
+            </div>
+        </div>
+        <div class="col tools">
+            <!-- Card Nav -->
+            <div class="card text-center tools_card">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs">
+                        <li class="nav-item">
+                            <a
+                                class="nav-link active"
+                                aria-current="true"
+                                href="#"
+                                >Converter</a
+                            >
+                        </li>   
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="{% url 'convertapp:list' %}"
+                                >list</a
+                            >
+                        </li>
+                    </ul>
+                </div>
+                <div class="card-body">
+                    <form
+                    action="."
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+                        {% csrf_token %}
+                        <select
+                        class="form-select mb-1"
+                        name="qRef"
+                    >
+                        <option selected>
+                            Select network
+                        </option>
+                        <option value="1">
+                           network data parsing
+                        </option>
+                        
+                    </select>
+
+                    <p>  
+cutoff confidence score
+                        <input type="text" id="conf" name="conf" value="ex) 700">
+                       </p>
+<p>  
+    project title
+   <input type="text" id="projecttitle" name="projecttitle" value="Your project">
+   </p>                          
+   <p>ppi</p>
+                            <input
+                              class="form-control"
+                                type="file"
+                                id="formFile"
+                                name="q"
+                                style="margin: 1.2rem 0"
+                            />
+
+                            <p>crops</p>                          
+                            <input
+                            class="form-control"
+                              type="file"
+                              id="formFile"
+                              name="q2"
+                              style="margin: 1.2rem 0"
+                          />
+<p> loc2str</p>
+                          <input
+                          class="form-control"
+                            type="file"
+                            id="formFile"
+                            name="q3"
+                            style="margin: 1.2rem 0"
+                        />
+
+
+                            <button
+                                type="submit"
+                                class="btn btn-secondary float-lg-end"
+                            >
+                                convert
+                            </button>
+         
+               </form>
+                
+                </div>
+            </div>
+            <!-- Card Nav end -->
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

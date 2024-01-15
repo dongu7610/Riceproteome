@@ -1,0 +1,163 @@
+
+
+#wholeT{
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 1rem;
+    padding-left: 1rem;
+} 
+#wholeA{
+  justify-content: center;
+  align-items: center;
+  padding-top: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 5rem;
+    padding-left: 1rem;
+} 
+
+#btncircle{
+  background-color: #D3D3D3;
+  height: 13px;
+  width: 13px;
+  border-radius: 50%;
+}
+
+span.navbar-text{
+
+  align-items: center;
+}
+#SCAFFOLD{
+  border-style: solid;
+  border-color: gray;
+ 
+  justify-content: center;
+
+  padding: 2rem;
+  margin-bottom: 5em;
+
+} 
+
+#SCAFFOLD3{
+  
+  display: flex;
+  justify-content: center;
+  padding:3rem;  
+  align-items: center;
+
+} 
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark > div > button > span {
+  background-image: url("./img/icons8-open-view-50.png");
+
+}
+
+#SCAFFOLD2{
+  margin-top:3%;
+ 
+} 
+
+
+.img-thumbnail{
+
+  height: 440px;
+
+}
+.Headerstyle{
+
+  border-style: solid;
+  border-color: gray;
+ 
+  justify-content: center;
+  
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #63666A;
+  background-color: cutom-color;
+  border-color: #63666A;
+  border-color: cutom-cor;
+}
+
+.btn-primary[disabled] {
+  color: #fff;
+  background-color: #63666A;
+  background-color: cutom-color;
+  border-color: #63666A;
+  border-color: cutom-cor;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #243a73;
+  background-color: cutom-color;
+  border-color: #243a73;
+  border-color: cutom-cor;
+}
+
+
+#venn{
+  
+  padding:1rem;
+}
+#Tableseg{
+
+  padding:2rem;
+
+}
+.tbody > .tbody-tr:hover {
+  cursor: pointer;
+}
+
+table{
+  table-layout:fixed;
+  }
+  td{
+  
+  max-width:25px;
+  overflow:hidden;
+      text-overflow:ellipsis;
+      word-wrap:break-word
+  }
+  th{
+  
+    word-wrap:break-word;
+    max-width:30px;
+    }
+  .svg{
+    margin: 5px;
+     padding: 5px;
+
+  }
+/*
+  .ui.cyan {
+    color: #00FFFF;
+  }
+  .ui.magenta {
+    color: #FF00FF;
+  }
+  */
+  .ui.cyan {
+    color: #00FFFF !important;
+  }
+
+  .ui.magenta {
+    color: #FF00FF !important;
+  }
+
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .blink-text {
+    animation: blink 1s infinite;
+  }

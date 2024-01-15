@@ -1,0 +1,130 @@
+
+from django.shortcuts import render
+from rest_framework import viewsets
+from .serializer import  User_seri #,proteinGroups_seri
+from .models import  User,proteinGroups ,FileList 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import PageNumberPagination
+import os, sys
+from django.utils import timezone
+
+from django_filters import Filter, FilterSet
+from django_filters.fields import Lookup
+from django_filters import rest_framework as filters
+from typing import List
+import pandas as pd
+from django.conf import settings
+from django.db import models
+from django.core.files.storage import FileSystemStorage
+from django.views.generic import ListView
+from .tasks import  parse_protein, test ,add
+#class Filterhormone(filters.FilterSet):
+#    filter_hormdd = filters.CharFilter(field_name="hormdd")  proteinGroups proteinGroups_seri
+ #   class Meta: 
+  #      model = FileData 
+   #     fields = [ 'project','filter_hormdd']
+def maskcolumns(xc):
+        #sample
+
+
+        
+    columns1 = ['Protein IDs'	,'Majority protein IDs'	,'Fasta headers'	,'Number of proteins',	'Peptides',	'Unique peptides',
+        'Sequence coverage [%]',	'Mol. weight [kDa]',	'Q-value'	,'Score']
+    columns2 =[x for x in xc if 'Reporter intensity corrected' in x ] 
+#    Con_DJ rep_1	Con_eMSP1 rep_1	Con_cMSP1 rep_1	JA_DJ rep_1	JA_eMSP1 rep_1	JA_cMSP1 rep_1	Con_DJ rep_2	Con_eMSP1 rep_2	Con_cMSP1 rep_2	JA_DJ rep_2	JA_eMSP1 rep_2	JA_cMSP1 rep_2	Con_DJ rep_3	Con_eMSP1 rep_3	Con_cMSP1 rep_3	JA_DJ rep_3	JA_eMSP1 rep_3	JA_cMSP1 rep_3	MS/MS count	
+
+    columns3 =    ['id','Evidence IDs']
+    return columns1+columns2+columns3
+
+def read_proteingroups(file_root):
+    
+    #read proteingroups
+
+    df_pgs = pd.read_csv(file_root, sep='\t')
+    df_pgs_ix=df_pgs[maskcolumns(df_pgs.columns)]
+    
+    
+    return df_pgs_ix
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 5
+    page_size_query_param = 'page_size'
+    max_page_size = 1000
+
+
+
+
+class User_view(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = User_seri
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ['researcherID']
+
+"""class proteinGroups_view(viewsets.ModelViewSet):
+    queryset = proteinGroups.objects.all()
+    serializer_class = proteinGroups_seri
+    filter_backends = (DjangoFilterBackend,)
+
+    pagination_class = StandardResultsSetPagination
+
+""" 
+def convert(request):
+
+    if request.method == 'POST':
+        selectRef = request.POST.get('qRef')
+
+        username = request.user
+        
+        if selectRef == 'Select reference version':
+
+            return render(request, 'convertapp/convert.html')
+
+
+        else:
+            try:
+                query_file = request.FILES['q']
+                fs = FileSystemStorage()
+                filename = fs.save(query_file.name, query_file)
+                numberofsamples = request.POST.get('nos')
+                sampleinfo      = request.POST.get('samples')
+                print('bbbb')
+                if selectRef == '1':
+                    a=parse_protein.delay(filename,str(username),numberofsamples,sampleinfo)
+                    print(a)
+                    parse_protein.delay(filename, str(username),numberofsamples,sampleinfo)
+
+
+
+
+                    print("done")
+                    
+                elif selectRef == '2':
+                    print('ccccc')
+                    parse_protein.delay(filename, str(username))
+
+                elif selectRef == '3':
+                    print('ddddd')
+                    parse_protein.delay(filename, str(username))
+                
+                else:
+                    return render(request, 'convertapp/convert.html')
+
+                return render(request, 'convertapp/approval.html')
+            except:
+                return render(request, 'convertapp/convert.html')
+
+    return render(request, 'convertapp/convert.html')
+class FileListView(ListView):
+    model = FileList
+    context_object_name = 'file_list'
+    template_name = 'convertapp/list.html'
+
+    ordering = ['-submitted_at']
+
+    def get_queryset(self):
+        return FileList.objects.filter(performer=self.request.user)
+def approval(request):
+    return render(request, 'convertapp/approval.html')
+
+# Create your views here.

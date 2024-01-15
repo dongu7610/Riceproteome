@@ -1,0 +1,36 @@
+<!-- NAV BAR -->
+<nav class="navbar">
+    <div class="navbar__logo">
+        <i class="fas fa-dna"></i>
+        <a href="">PGL</a>
+    </div>
+    <ul class="navbar__menu">
+        <li><a href="">Home</a></li>
+        <li><a href="">Tools</a></li>
+        <li><a href="">FAQs</a></li>
+        <li><a href="">Contact</a></li>
+    </ul>
+    <div class="navbar__icons">
+        {% if user.is_authenticated %}
+        <form method="POST" action="{% url 'accounts:logout' %}">
+            {% csrf_token %} Hello! {{ user.get_username }}
+            <button type="submit" class="btn btn-secondary btn-sm">LOGOUT</button>
+        </form>
+        <form method="POST" action="{% url 'accounts:update' pk=user.pk %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary btn-sm" style="margin-left:0.5rem;">Edit</button>
+        </form>
+        {% else %}
+        <a class="text-decoration-none" href="{% url 'accounts:login' %}" style="margin-right: 0.5rem;">
+            <button class="btn btn-secondary btn-sm">LOGIN</button>
+        </a>
+        <a class="text-decoration-none" href="{% url 'accounts:create' %}">
+            <button class="btn btn-secondary btn-sm">SIGN UP</button>
+        </a>
+        {% endif %}
+    </div>
+    <a href="#" class="navbar__toggleBtn">
+        <i class="fas fa-bars"></i>
+    </a>
+</nav>
+<!-- NAV BAR end -->

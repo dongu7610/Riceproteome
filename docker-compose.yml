@@ -1,0 +1,100 @@
+version: '3'
+
+services:
+  backend:
+    
+    container_name: proteomDjango
+    image: proteomdjango240101
+    #proteomdjango ->proteomdjango240101
+    volumes:
+      - ./proteomDjango231231/celery_Proteomics:/celery_Proteomics
+      #/proteomDjango/celery_Proteomics/db.sqlite3
+      #./proteomDjango/celery_Proteomics:/celery_Proteomics-> ./proteomDjango231231/celery_Proteomics:/celery_Proteomics
+      #- static:/static
+      
+      #/proteomDjango/celery_Proteomics/media/
+    #build:
+     
+
+      #context: ./proteomDjango/
+      #dockerfile: Dockerfile
+      #log_driver: "json-file"
+    command: >
+      sh -c "python3 manage.py makemigrations &&
+        python3 manage.py migrate &&
+        gunicorn --bind 0:8000 --workers 2 --log-level debug celery_prote.wsgi"     
+    #gunicorn --bind 0:8000 --workers 5 --log-level debug celery_prote.wsgi
+    ports:
+      - "5506:8000"
+    
+  frontend:
+    container_name: proteomReact
+    image: proteomreact_pub4_240109
+    #proteomreact_pub2 -> proteomreact_pub3_20231121 ->proteomreact_pub4_240101
+    #build:
+      #
+      #context: ./proteomReact/
+    volumes:
+      - ./proteomReact231231/loginapp:/loginapp
+      #proteomReact/loginapp:/loginapp-> ./proteomReact231231/loginapp:/loginapp
+      #dockerfile: Dockerfile
+    #command: npm start
+    stdin_open: true
+    tty: true
+    ports:
+      - "5616:80"
+
+            #react 는 worker file이름이다.
+  nginx:
+    image: nginx:latest
+
+    ports:
+      - 5610:80
+
+    volumes:
+      - ./nginx/nginx-setup.conf:/etc/nginx/conf.d/nginx-setup.conf
+      #- ./proteomReact/loginapp:/var/www/proteomReact
+
+
+    depends_on:
+      - backend
+      - frontend
+
+  rabbitmq:
+    image: rabbitmq:latest
+    ports:
+      - "5612:5672"
+  celery:
+    image: proteomdjango240101
+    #proteomdjango ->proteomdjango240101
+    volumes:
+      - ./proteomDjango231231/celery_Proteomics:/celery_Proteomics
+    #build: ./proteomDjango/
+   
+
+    command: celery -A celery_prote worker -l info -c 2
+      
+    depends_on:
+    
+      - rabbitmq
+      - backend
+
+  beat:
+    image: proteomdjango240101
+    #proteomdjango ->proteomdjango240101
+    volumes:
+      - ./proteomDjango231231/celery_Proteomics:/celery_Proteomics
+    #build: ./proteomDjango/
+
+    command: celery -A celery_prote beat -l info
+    #celery -A celery_prote beat -l info
+    #beat -l info -S django
+    #beat -l info --scheduler
+    #--loglevel=debug --scheduler django_celery_beat.schedulers:DatabaseSchedule
+    depends_on:
+      - rabbitmq
+      - celery
+      - backend
+   
+
+#celery_prote

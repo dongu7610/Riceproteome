@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block mainContent %}
+<div style="display: flex; justify-content: center; align-items: center;">
+    <div class="card" style="width: 30rem; margin: 10rem 0; height: 20rem;">
+        <h5 class="card-header">Success</h5>
+        <div class="card-body">
+            <h5 class="card-title">Application completed</h5>
+            <p class="card-text">Conversion operation started.</p>
+            <div style="display: flex;">
+                <a href="{% url 'convertapp:convert' %}" class="card-link" style="text-decoration: underline; color: blue;">Back</a>
+                <a href="{% url 'convertapp:list' %}" class="card-link" style="text-decoration: underline; color: blue;">Check work list</a>
+            </div>
+            
+        </div>
+      </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% endblock %}

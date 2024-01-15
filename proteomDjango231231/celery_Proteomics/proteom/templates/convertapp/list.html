@@ -1,0 +1,49 @@
+{% extends 'base.html' %} {% block mainContent %}
+<div
+    class="
+        container
+        d-flex
+        justify-content-center
+        align-content-center
+        flex-column
+    "
+    style="min-height: 60vh"
+>
+    {% if file_list %}
+    <h3 style="text-align: center; margin: 2rem 0;">Converted File List</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Submitted File</th>
+                <th scope="col">Submitted_at</th>
+                <th scope="col">Converted File</th>
+                <th scope="col">Created_at</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in file_list %}
+            <tr>
+                <td>{{ file.filename }}</td>
+                <td>{{ file.submitted_at }}</td>
+                <td>
+                    {% if file.fileUrl %}
+                    <a
+                        href="{{ file.fileUrl }}"
+                        style="text-decoration: none"
+                        download
+                        >Download</a
+                    >
+                    {% else %}
+                    <span style="color: red">YET</span>
+                    {% endif %}
+                </td>
+                <td>{{ file.created_at }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <h1 style="text-align: center">Empty</h1>
+    {% endif %}
+</div>
+{% endblock %} {% block content %} {% endblock %}
