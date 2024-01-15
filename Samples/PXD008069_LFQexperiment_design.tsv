@@ -1,0 +1,10 @@
+experimentname	samplename	condition	replicate
+LFQ intensity control rep1	control_1	control	1
+LFQ intensity control rep2	control_1	control	2
+LFQ intensity control rep3	control_1	control	3
+LFQ intensity flg22 rep1	flg22_1	flg22	1
+LFQ intensity flg22 rep2	flg22_1	flg22	2
+LFQ intensity flg22 rep3	flg22_1	flg22	3
+LFQ intensity MSP1 rep1	MSP1_1	msp1	1
+LFQ intensity MSP1 rep2	MSP1_1	msp1	2
+LFQ intensity MSP1 rep3	MSP1_1	msp1	3
